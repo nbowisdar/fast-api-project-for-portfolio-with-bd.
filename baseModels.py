@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 from pydantic.utils import GetterDict
 from pydantic import BaseModel
 from peewee import ModelSelect
@@ -13,7 +13,6 @@ class PeeweeGetterDict(GetterDict):
 
 
 class BaseUser(BaseModel):
-    id: int
     name: str
     balance: float
 
@@ -23,8 +22,12 @@ class BaseUser(BaseModel):
 
 
 class ShowUser(BaseUser):
-    pass
+    id: int
+
 
 class CreateUser(BaseUser):
     password: str
 
+
+class AllUsers(BaseModel):
+    users: list[BaseUser]

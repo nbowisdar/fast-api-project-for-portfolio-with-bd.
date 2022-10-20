@@ -1,13 +1,16 @@
 from peewee import *
-from baseModels import ShowUser
+from baseModels import ShowUser, AllUsers
 from playhouse.shortcuts import model_to_dict
 import logging
+from dotenv import load_dotenv
+import os
 logging.basicConfig(level=logging.INFO)
+load_dotenv()
 db = PostgresqlDatabase('game',
                         host='localhost',
                         port=5432,
-                        user='test_user',
-                        password='root')
+                        user=os.getenv('DB_USER'),
+                        password=os.getenv('DB_PASSWORD'))
 
 
 class MyUser(Model):
@@ -19,9 +22,12 @@ class MyUser(Model):
         database = db
 
 
-def show_all() -> ShowUser:
-    user = MyUser.select().where(MyUser.name == 'vova').get()
-    return ShowUser(**model_to_dict(user))
+def show_all() -> AllUsers:
+    rez = {'users': []}
+    user = MyUser.select()
+    for user in user:
+        rez['users'].append(ShowUser(**model_to_dict(user)))
+    return AllUsers(**rez)
 
 
 def create_user(name: str, password: str, balance = 0) -> str | None:
@@ -44,12 +50,12 @@ def drop_user(name) -> str | None:
         logging.error(err)
 
 
-def update_balance(name: str, value: int):
+def update_balance(name: str, tokens: int):
     try:
         user = MyUser.get(name=name)
-        user.balance = value
+        user.balance = tokens
         user.save()
-        logging.info(f'{name} - balance updated, new value: {value}')
+        logging.info(f'{name} - balance updated, new value: {tokens}')
 
     except Exception as err:
         logging.error(err)
@@ -64,4 +70,3 @@ def update_password(name: str, new_password: str):
 
     except Exception as err:
         logging.error(err)
-
