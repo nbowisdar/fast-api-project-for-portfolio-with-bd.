@@ -1,6 +1,6 @@
-from fastapi import FastAPI
-import baseModels as m
-from database import new_db as db
+from fastapi import FastAPI, status, HTTPException
+from dantic_models.BaseModels import BaseUser
+from database import queries as db
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -9,51 +9,90 @@ app = FastAPI()
 
 @app.get("/show_all")
 async def show_all():
-    data = db.show_all()
+    data = db.show_all_users()
     return {data.json()}
 
 
 @app.post('/create_user')
-async def create_user(user: m.CreateUser):
+async def create_user(user: BaseUser):
     try:
-        db.create_user(user.name, user.password, user.balance)
-        logging.info(f'{user.name} - created')
-        return {'ok'}
+        db.create_user(user.email, user.login, user.password)
+        logging.info(f'{user.login} - created')
+        return {f'{user.login} - created'}
 
     except Exception as err:
         logging.error(err)
-        logging.error('Wrong attempt to create user')
-        return {'error'}
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(err)
+        )
+
 
 @app.delete('/drop_user')
 async def drop_user(login: str):
     try:
         db.drop_user(login)
-        return {'ok'}
+        return {f'{login} - deleted'}
     except Exception as err:
         logging.error(err)
         return {err}
 
-@app.put('/update_balane')
+
+@app.put('/update_balance')
 def update_balance(login: str, tokens: int):
     try:
         db.update_balance(login, tokens)
         logging.info(f'{login} - balance update')
-        return {'ok'}
+        return {f'{login} - balance update'}
 
     except Exception as err:
         logging.error(err)
-        return {'error'}
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(err)
+        )
+
+
+@app.put('/reset_password')
+def reset_password(login: str, new_password: str):
+    try:
+        db.reset_password(login, new_password)
+        logging.info(f'{login} - password update')
+        return {f'{login} - password update'}
+
+    except Exception as err:
+        logging.error(err)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(err)
+        )
 
 
 @app.put('/update_password')
-def update_password(login: str, new_password: str):
+def update_password(login: str, old_password: str, new_password: str):
     try:
-        db.update_password(login, new_password)
+        db.update_password(login, old_password, new_password)
         logging.info(f'{login} - password update')
-        return {'ok'}
+        return {f'{login} - password update'}
 
     except Exception as err:
         logging.error(err)
-        return {'error'}
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(err)
+        )
 
+
+##################################
+@app.post('/create_match')
+def create_match(price: float, number_participants: int, user_id: int):
+    try:
+        match_id = db.create_match(price, number_participants, user_id)
+        logging.info(f'{match_id} - ended')
+        return {f'Match №{match_id} - ended'}
+    except Exception as err:
+        logging.error(err)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(err)
+        )
