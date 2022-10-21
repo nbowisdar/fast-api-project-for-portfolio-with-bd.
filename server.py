@@ -1,7 +1,6 @@
-from fastapi import FastAPI, Path
+from fastapi import FastAPI
 import baseModels as m
-import new_db as db
-import json
+from game_back.database import new_db as db
 import logging
 
 logging.basicConfig(level=logging.INFO)
