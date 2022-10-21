@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 import baseModels as m
-from game_back.database import new_db as db
+from database import new_db as db
 import logging
 
 logging.basicConfig(level=logging.INFO)

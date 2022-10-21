@@ -1,18 +1,9 @@
-from ..baseModels import ShowUser, AllUsers
+import sys
+sys.path.append("..")
+from game_back.baseModels import ShowUser, AllUsers
 from playhouse.shortcuts import model_to_dict
-import logging
-from dotenv import load_dotenv
-import os
-from tables import *
+from game_back.database.tables import *
 
-
-logging.basicConfig(level=logging.INFO)
-load_dotenv()
-db = PostgresqlDatabase('game',
-                        host='localhost',
-                        port=5432,
-                        user=os.getenv('DB_USER'),
-                        password=os.getenv('DB_PASSWORD'))
 
 
 def show_all() -> AllUsers:
