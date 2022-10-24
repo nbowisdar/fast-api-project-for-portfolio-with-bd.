@@ -1,5 +1,5 @@
 from peewee import Model, CharField, ForeignKeyField, FloatField,\
-    IntegerField, DateTimeField, DateField
+    IntegerField, DateTimeField, DateField, BooleanField
 from src.utils.database.connect_to_db import db
 from datetime import datetime
 
@@ -11,7 +11,7 @@ class NFT(Model):
         database = db
 
 
-class MyUser(Model):
+class User(Model):
     email = CharField(unique=True)
     login = CharField(unique=True)
     password = CharField()
@@ -21,10 +21,11 @@ class MyUser(Model):
 
     class Meta:
         database = db
+        db_table = 'user_acc'
 
 
 class UserNFT(Model):
-    user = ForeignKeyField(MyUser, backref='nfts')
+    user = ForeignKeyField(User, backref='nfts')
     NFT = ForeignKeyField(NFT, backref='users_with_nft')
 
     class Meta:
@@ -33,22 +34,24 @@ class UserNFT(Model):
 
 class Match(Model):
     price_enter = FloatField()
-    number_participants = IntegerField(null=True)
     money_for_winner = FloatField()
-    winner = ForeignKeyField(MyUser)
-    ended = DateTimeField(default=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    winner = ForeignKeyField(User, null=True)
+    started = DateTimeField(default=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    ended = DateTimeField(null=True)
+    finished = BooleanField(default=False)
 
     class Meta:
         database = db
 
 
 class UserMatch(Model):
-    user = ForeignKeyField(MyUser, backref='matches')
+    user = ForeignKeyField(User, backref='matches')
     match = ForeignKeyField(Match, backref='participants')
 
     class Meta:
         database = db
 
 
-with db.atomic():
-    db.create_tables([NFT, MyUser, UserNFT, Match, UserMatch])
+if __name__ == '__main__':
+    with db.atomic():
+        db.create_tables([NFT, User, UserNFT, Match, UserMatch])

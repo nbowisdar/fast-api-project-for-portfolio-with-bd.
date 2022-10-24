@@ -15,5 +15,5 @@ class UserFullModel(BaseUser):
 
 
 
-class AllUsers(BaseModel):
+class UserPlural(BaseModel):
     users: list[BaseUser]
