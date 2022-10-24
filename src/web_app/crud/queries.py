@@ -62,10 +62,16 @@ def update_password(login: str, old_password: str, new_password: str):
 'queries Match'
 
 
-def match_started(price: float, users: list[int]):
-    money = price * len(users)
+def match_started(price_enter: float, users: list[int]):
+    money = price_enter * len(users)
     with db.atomic():
-        match = Match.create(price_enter=price, money_for_winner=money)
+        match = Match.create(price_enter=price_enter, money_for_winner=money)
+    with db.atomic():
+        # update users' balances
+        for user_id in users:
+            user = User.get(id=user_id)
+            user.balance -= price_enter
+            user.save()
     with db.atomic():
         #create query in format:
         # [(match_id, user_id-1), (match_id, user_id-2)...]
@@ -78,12 +84,20 @@ def match_started(price: float, users: list[int]):
 def match_ended(match_id: int, winner_id: int):
     with db.atomic():
         match = Match.get(id=match_id)
+        if match.finished:
+            raise ValueError('this match is already finished!')
         match.winner = winner_id
         match.ended = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         match.finished = True
         match.save()
+
+        #added money on balance to winner
+        user = User.get(id=winner_id)
+        user.balance += match.money_for_winner
+        user.save()
     logger.info(f'Match №{match_id} ended')
 
 
-#match_started(5, [1,2,3])
-#match_ended(4, 2)
+#match_started(10, [1,2,3])
+
+match_ended(11, 2)
