@@ -1,13 +1,13 @@
 from fastapi import HTTPException
 from fastapi import status
 from schemas.base_models import BaseUser
-from src.web_app.crud import queries as db
+from src.web_app.crud import users_queries as db
 from loguru import logger
 from src.web_app.server import app
 
 
-@app.get("/show_all")
-async def show_all():
+@app.get("/show_all_users")
+async def show_all_users():
     data = db.show_all_users()
     return {data.json()}
 
