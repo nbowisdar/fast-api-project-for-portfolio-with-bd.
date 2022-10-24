@@ -1,16 +1,9 @@
-from fastapi import FastAPI, status, HTTPException
+from fastapi import HTTPException
+from fastapi import status
 from schemas.base_models import BaseUser
 from src.utils.database import queries as db
 import logging
-
-logging.basicConfig(level=logging.INFO)
-
-app = FastAPI()
-
-@app.get("/show_all")
-async def show_all():
-    data = db.show_all_users()
-    return {data.json()}
+from server import app
 
 
 @app.post('/create_user')
@@ -83,7 +76,6 @@ def update_password(login: str, old_password: str, new_password: str):
         )
 
 
-##################################
 @app.post('/create_match')
 def create_match(price: float, number_participants: int, user_id: int):
     try:
@@ -93,6 +85,6 @@ def create_match(price: float, number_participants: int, user_id: int):
     except Exception as err:
         logging.error(err)
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
+            status_code=status.HTTP_408_CONFLICT,
             detail=str(err)
         )
