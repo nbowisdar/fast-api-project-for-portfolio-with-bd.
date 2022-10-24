@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from fastapi import status
 from schemas.base_models import BaseUser
-from src.utils.database import queries as db
+from src.web_app.crud import queries as db
 import logging
 from server import app
 

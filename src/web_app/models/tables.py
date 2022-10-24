@@ -32,8 +32,8 @@ class MyUser(Model):
 
 
 class UserNFT(Model):
-    user_id = ForeignKeyField(MyUser, backref='nfts')
-    NFT_id = ForeignKeyField(NFT, backref='users_with_nft')
+    user = ForeignKeyField(MyUser, backref='nfts')
+    NFT = ForeignKeyField(NFT, backref='users_with_nft')
 
     class Meta:
         database = db
@@ -51,8 +51,8 @@ class Match(Model):
 
 
 class UserMatch(Model):
-    user_id = ForeignKeyField(MyUser, backref='matches')
-    match_id = ForeignKeyField(Match, backref='participants')
+    user = ForeignKeyField(MyUser, backref='matches')
+    match = ForeignKeyField(Match, backref='participants')
 
     class Meta:
         database = db

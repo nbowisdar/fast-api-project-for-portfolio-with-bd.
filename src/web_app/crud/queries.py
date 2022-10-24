@@ -3,7 +3,7 @@
 # from game_back.dantic_models.UserModels import BaseUser, AllUsers
 from schemas.user_models import BaseUser, AllUsers
 from playhouse.shortcuts import model_to_dict
-from game_back.src.utils.database.tables import *
+from src.web_app.models.tables import *
 
 
 def show_all_users() -> AllUsers:
