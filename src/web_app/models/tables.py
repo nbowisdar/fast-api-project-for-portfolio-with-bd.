@@ -50,4 +50,5 @@ class UserMatch(Model):
         database = db
 
 
-db.create_tables([NFT, MyUser, UserNFT, Match, UserMatch])
+with db.atomic():
+    db.create_tables([NFT, MyUser, UserNFT, Match, UserMatch])
