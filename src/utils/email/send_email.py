@@ -1,9 +1,7 @@
-import logging
+from loguru import logger
 import smtplib
 from email.message import EmailMessage
 import random
-import asyncio
-
 
 
 class MyEmail:
@@ -25,7 +23,7 @@ class MyEmail:
         msg['From'] = self.sender
         msg['To'] = email_rcv
         self.__smtp.send_message(msg)
-        logging.info('Code was send')
+        logger.info('Code was send')
 
     @staticmethod
     def generate_code():

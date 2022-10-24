@@ -1,9 +1,8 @@
 from peewee import *
 from dotenv import load_dotenv
 import os
-import logging
 from datetime import datetime
-logging.basicConfig(level=logging.INFO)
+
 
 load_dotenv()
 db = PostgresqlDatabase(database=os.getenv('DB_NAME'),

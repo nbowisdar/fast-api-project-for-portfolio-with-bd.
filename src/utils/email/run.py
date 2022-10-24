@@ -1,10 +1,8 @@
-
 from send_email import MyEmail
-import logging
 import os
+from loguru import logger
 from dotenv import load_dotenv
 
-logging.basicConfig(level=logging.INFO)
 
 def main():
     load_dotenv()
@@ -16,7 +14,7 @@ def main():
 
         #wait_and_reset('mark', code, p.update_password)
     except Exception as err:
-        logging.error(err)
+        logger.error(err)
     finally:
         mail.disconnect()
 
