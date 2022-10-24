@@ -1,4 +1,4 @@
-from .BaseModels import BaseMatch, BaseUser
+from .base_models import BaseMatch, BaseUser
 
 
 class MatchFullModel(BaseMatch):

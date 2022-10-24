@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status, HTTPException
-from dantic_models.BaseModels import BaseUser
-from database import queries as db
+from schemas.base_models import BaseUser
+from src.utils.database import queries as db
 import logging
 
 logging.basicConfig(level=logging.INFO)

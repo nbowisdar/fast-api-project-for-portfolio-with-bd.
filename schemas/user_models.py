@@ -1,4 +1,4 @@
-from .BaseModels import BaseUser, BaseMatch, BaseNft
+from .base_models import BaseUser, BaseMatch, BaseNft
 from pydantic import BaseModel
 
 

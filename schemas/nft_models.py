@@ -1,4 +1,4 @@
-from .BaseModels import BaseNft, BaseUser
+from .base_models import BaseNft, BaseUser
 
 
 class NftFullModel(BaseNft):
