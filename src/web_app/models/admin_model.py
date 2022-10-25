@@ -3,7 +3,7 @@ from src.utils.database.connect_to_db import db
 
 
 class Admin(Model):
-    email = CharField(unique=True)
+    username = CharField(unique=True)
     password = CharField()
 
     class Meta:
@@ -12,3 +12,8 @@ class Admin(Model):
 if __name__ == '__main__':
     with db.atomic():
         db.create_tables([Admin])
+        #Admin.(username='root', password='root')
+        user = Admin.get_or_none(username='root')
+        if user:
+            user
+

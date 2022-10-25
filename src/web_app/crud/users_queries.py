@@ -28,7 +28,6 @@ def login(login: str, password: str):
         if not user:
             #raise ValueError('wrong credentials')
             raise ValueError('wrong login')
-
         p = Password(password)
         true_password = user.password
         if not p.check_password(true_password):
