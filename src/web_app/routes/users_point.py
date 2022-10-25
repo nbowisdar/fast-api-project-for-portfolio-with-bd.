@@ -3,16 +3,18 @@ from fastapi import status
 from schemas.base_models import BaseUser
 from src.web_app.crud import users_queries as db
 from loguru import logger
-from src.web_app.server import app
+from fastapi import APIRouter
+
+users_router = APIRouter()
 
 
-@app.get("/show_all_users")
+@users_router.get("/show_all_users")
 async def show_all_users():
     data = db.show_all_users()
     return {data.json()}
 
 
-@app.post('/create_user')
+@users_router.post('/create_user')
 async def create_user(user: BaseUser):
     try:
         db.create_user(user.email, user.login, user.password)
@@ -27,7 +29,7 @@ async def create_user(user: BaseUser):
         )
 
 
-@app.delete('/drop_user')
+@users_router.delete('/drop_user')
 async def drop_user(login: str):
     try:
         db.drop_user(login)
@@ -37,7 +39,7 @@ async def drop_user(login: str):
         return {err}
 
 
-@app.put('/update_balance')
+@users_router.put('/update_balance')
 def update_balance(login: str, tokens: int):
     try:
         db.update_balance(login, tokens)
@@ -52,7 +54,7 @@ def update_balance(login: str, tokens: int):
         )
 
 
-@app.put('/reset_password')
+@users_router.put('/reset_password')
 def reset_password(login: str, new_password: str):
     try:
         db.reset_password(login, new_password)
@@ -67,7 +69,7 @@ def reset_password(login: str, new_password: str):
         )
 
 
-@app.put('/update_password')
+@users_router.put('/update_password')
 def update_password(login: str, old_password: str, new_password: str):
     try:
         db.update_password(login, old_password, new_password)

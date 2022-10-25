@@ -1,12 +1,16 @@
 from fastapi import HTTPException
 from fastapi import status
-from schemas.base_models import BaseUser
 from src.web_app.crud import matches_queries as db
 from loguru import logger
-from src.web_app.server import app
+from fastapi import APIRouter
 
+matches_router = APIRouter()
 
-@app.post('/start_new_match')
+@matches_router.get('/test')
+def test():
+    return {'Hello': 'router'}
+
+@matches_router.post('/start_new_match')
 def start_new_match(price: float, participants: list[int], ):
     try:
         match_id = db.match_started(price, participants)
@@ -20,7 +24,7 @@ def start_new_match(price: float, participants: list[int], ):
         )
 
 
-@app.post('/finish_match')
+@matches_router.post('/finish_match')
 def finish_match(match_id: int, winner_id: int):
     try:
         match_id = db.match_ended(match_id, winner_id)

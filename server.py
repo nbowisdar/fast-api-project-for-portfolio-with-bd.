@@ -1,10 +1,12 @@
-from datetime import datetime, timedelta
+from fastapi import FastAPI
+from src.web_app.routes.users_point import users_router
+from src.web_app.routes.match_points import matches_router
 
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from src.utils.paswords_val import Password
-from pydantic import BaseModel
+
+app = FastAPI()
+
+app.include_router(users_router)
+app.include_router(matches_router)
 
 # to get a string like this run:
 # openssl rand -hex 32
