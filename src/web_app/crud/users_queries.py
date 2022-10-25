@@ -2,7 +2,7 @@ from schemas.user_models import BaseUser, UserPlural
 from playhouse.shortcuts import model_to_dict
 from src.web_app.models.tables import *
 from loguru import logger
-from src.utils.paswords_val import Password
+from src.utils.security.paswords_val import Password
 from src.utils.database.connect_to_db import db
 
 
@@ -37,6 +37,7 @@ def login(login: str, password: str):
         #TODO: create DJT token and return it
         return True
 
+
 def drop_user(login) -> str:
     with db.atomic():
         user = User.get(login=login)
@@ -65,7 +66,7 @@ def update_password(login: str, old_password: str, new_password: str):
     with db.atomic():
         user = User.get(login=login)
         p_old = Password(old_password, validate=True)
-        if p_old.hash_password != user.password:
+        if not p_old.check_password(user.password):
             raise ValueError('wrong password')
         p_new = Password(new_password, validate=True)
         user.password = p_new.hash_password

@@ -6,9 +6,6 @@ from fastapi import APIRouter
 
 matches_router = APIRouter()
 
-@matches_router.get('/test')
-def test():
-    return {'Hello': 'router'}
 
 @matches_router.post('/start_new_match')
 def start_new_match(price: float, participants: list[int], ):

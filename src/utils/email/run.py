@@ -1,12 +1,9 @@
 from send_email import MyEmail
-import os
 from loguru import logger
-from dotenv import load_dotenv
-
+from src.utils.tools.config import MAIL_SENDER, MAIL_PASSWORD
 
 def main():
-    load_dotenv()
-    mail = MyEmail(os.getenv('MAIL_SENDER'), os.getenv('MAIL_PASSWORD'))
+    mail = MyEmail(MAIL_SENDER, MAIL_PASSWORD)
     try:
         mail_recv = '380992566619v@gmail.com'
         code = mail.generate_code()

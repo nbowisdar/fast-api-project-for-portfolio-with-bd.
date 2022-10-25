@@ -1,11 +1,24 @@
 from fastapi import HTTPException
 from fastapi import status
 from schemas.base_models import BaseUser
+from schemas.user_models import LoginModel, UserResetPass, UserUpdatePass
 from src.web_app.crud import users_queries as db
 from loguru import logger
 from fastapi import APIRouter
 
 users_router = APIRouter()
+
+@users_router.post('/login/')
+async def login(user: LoginModel):
+    try:
+        db.login(user.login, user.password)
+        return {'success'}
+    except Exception as err:
+        logger.error(err)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(err)
+        )
 
 
 @users_router.get("/show_all_users")
@@ -55,9 +68,9 @@ def update_balance(login: str, tokens: int):
 
 
 @users_router.put('/reset_password')
-def reset_password(login: str, new_password: str):
+def reset_password(user: UserResetPass):
     try:
-        db.reset_password(login, new_password)
+        db.reset_password(user.login, user.new_password)
         logger.info(f'{login} - password update')
         return {f'{login} - password update'}
 
@@ -70,9 +83,9 @@ def reset_password(login: str, new_password: str):
 
 
 @users_router.put('/update_password')
-def update_password(login: str, old_password: str, new_password: str):
+def update_password(user: UserUpdatePass):
     try:
-        db.update_password(login, old_password, new_password)
+        db.update_password(user.login, user.old_password, user.new_password)
         logger.info(f'{login} - password update')
         return {f'{login} - password update'}
 

@@ -1,9 +1,9 @@
-from dotenv import load_dotenv
-import os
 from peewee import PostgresqlDatabase
+from src.utils.tools.config import DATABASE, HOST, USER, PASSWORD
 
-load_dotenv()
-db = PostgresqlDatabase(database=os.getenv('DB_NAME'),
-                        host=os.getenv('DB_HOST'),
-                        user=os.getenv('DB_USER'),
-                        password=os.getenv('DB_PASSWORD'))
+db = PostgresqlDatabase(
+    database=DATABASE,
+    host=HOST,
+    user=USER,
+    password=PASSWORD
+)

@@ -2,11 +2,11 @@ import bcrypt
 
 #encript and validate password
 class Password:
-    def __init__(self, password: str, validate=False):
+    def __init__(self, new_password: str, validate=False):
         if validate:
-            Password.validation_password(password)
+            Password.validation_password(new_password)
 
-        password = password.encode('utf-8')
+        password = new_password.encode('utf-8')
         self.password = password
         self.hash_password = Password.encrypt_password(password)
 
