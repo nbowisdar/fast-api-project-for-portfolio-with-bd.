@@ -32,7 +32,7 @@ def verify_password(password, true_password):
     return p.check_password(true_password)
 
 
-def authenticate_user(username: str, password: str) -> Admin:
+def authenticate_user(username: str, password: str) -> Admin | bool:
     user = Admin.get_or_none(username=username)
     if not user:
         return False

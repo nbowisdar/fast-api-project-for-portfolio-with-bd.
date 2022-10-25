@@ -26,14 +26,14 @@ def login(login: str, password: str):
     with db.atomic():
         user = User.get_or_none(login=login)
         if not user:
-            #raise ValueError('wrong credentials')
+            # raise ValueError('wrong credentials')
             raise ValueError('wrong login')
         p = Password(password)
         true_password = user.password
         if not p.check_password(true_password):
             raise ValueError('wrong password')
 
-        #TODO: create DJT token and return it
+        # TODO: create DJT token and return it
         return True
 
 
@@ -73,6 +73,6 @@ def update_password(login: str, old_password: str, new_password: str):
     logger.info(f'{login} - password updated')
 
 
-#create_user('test@mailg.ro', 'log', 'password213')
+# create_user('test@mailg.ro', 'log', 'password213')
 
 

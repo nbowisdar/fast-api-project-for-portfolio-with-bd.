@@ -2,12 +2,12 @@ from os import getenv
 from dotenv import load_dotenv
 load_dotenv()
 
-#project
+# project
 SECRET_KEY = getenv('SECRET_KEY')
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1000
 
-#email_cred
+# email_cred
 MAIL_SENDER = getenv('MAIL_SENDER')
 MAIL_PASSWORD = getenv('MAILPASSWORD')
 

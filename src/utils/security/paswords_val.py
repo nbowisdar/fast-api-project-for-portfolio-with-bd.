@@ -1,6 +1,6 @@
 import bcrypt
 
-#encript and validate password
+# encrypt and validate password
 class Password:
     def __init__(self, new_password: str, validate=False):
         if validate:
