@@ -1,14 +1,18 @@
 import bcrypt
 
-
+#encript and validate password
 class Password:
-    def __init__(self, password: str):
-        if Password.validation_password(password):
-            self.password = password.encode('utf-8')
+    def __init__(self, password: str, validate=False):
+        if validate:
+            Password.validation_password(password)
 
-    def hash_password(self) -> bytes:
-        crypt_password = bcrypt.hashpw(self.password, bcrypt.gensalt())
-        return crypt_password
+        password = password.encode('utf-8')
+        self.password = password
+        self.hash_password = Password.encrypt_password(password)
+
+    @staticmethod
+    def encrypt_password(password) -> bytes:
+        return bcrypt.hashpw(password, bcrypt.gensalt())
 
     def check_password(self, exist_salt_password: bytes | str) -> bool:
         if type(exist_salt_password) == str:
