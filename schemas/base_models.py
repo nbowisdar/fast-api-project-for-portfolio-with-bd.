@@ -37,3 +37,8 @@ class ServerKey(BaseModel):
 
 class Token(BaseModel):
     access_token: str
+
+
+class Root(BaseModel):
+    username: str
+    password: str

@@ -3,7 +3,8 @@ from loguru import logger
 from src.utils.database.connect_to_db import db
 
 
-def match_started(price_enter: float, users: list[int]) -> int:
+def match_started(price_enter: float, users: str) -> int:
+    users = list(map(int, users.split()))
     money = price_enter * len(users)
     with db.atomic():
         match = Match.create(price_enter=price_enter, money_for_winner=money)
@@ -37,3 +38,4 @@ def match_ended(match_id: int, winner_id: int) -> None:
         user.balance += match.money_for_winner
         user.save()
     logger.info(f'Match {match.get_id()} has finished')
+

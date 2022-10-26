@@ -9,14 +9,6 @@ from src.utils.security.jwt.jwt_token import create_access_token, encrypt_token,
 from fastapi import Depends
 
 
-def show_all_users() -> UserPlural:
-    rez = {'users': []}
-    users = User.select()
-    for user in users:
-        rez['users'].append(BaseUser(**model_to_dict(user)))
-    return UserPlural(**rez)
-
-
 def create_user(mail: str, login: str, password: str) -> str:
     p = Password(password, validate=True)
     with db.atomic():
@@ -58,32 +50,6 @@ def get_user(user: dict = Depends(encrypt_token)) -> UserFullModel:
         )
 
 
-
-
-def drop_user(login) -> str:
-    with db.atomic():
-        user = User.get(login=login)
-        user.delete_instance()
-    return login
-
-
-def update_balance(login: str, tokens: int):
-    with db.atomic():
-        user = User.get(login=login)
-        user.balance = tokens
-        user.save()
-    logger.info(f'{login} - balance updated, new value: {tokens}')
-
-
-def reset_password(login: str, new_password: str):
-    with db.atomic():
-        user = User.get(login=login)
-        p = Password(new_password, validate=True)
-        user.password = p.hash_password
-        user.save()
-    logger.info(f'{login} - password updated')
-
-
 def update_password(login: str, old_password: str, new_password: str):
     with db.atomic():
         user = User.get(login=login)
@@ -100,4 +66,3 @@ if __name__ == '__main__':
     with db.atomic():
         user = User.get(login='root')
         print(type(user.created_date))
-

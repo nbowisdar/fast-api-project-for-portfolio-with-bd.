@@ -1,5 +1,7 @@
 from loguru import logger
-from src.utils.tools.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+
+from src.utils.errors.auth_errors import credentials_exception
+from src.utils.tools.config import SECRET_KEY, ALGORITHM, ROOT_USERNAME, ROOT_PASSWORD
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends
 from datetime import datetime, timedelta
@@ -22,11 +24,26 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 # return login and position in dict
 def encrypt_token(token: str = Depends(oauth2_scheme)) -> dict:
-    logger.info(token)
-    print(token)
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError as err:
+        logger.error(err)
+        raise credentials_exception
     data = {
         'login': payload.get('sub'),
         'position': payload.get('position')
     }
     return data
+
+
+def get_root(token: str = Depends(oauth2_scheme)) -> bool:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError as err:
+        logger.error(err)
+        raise credentials_exception
+    if ROOT_USERNAME == payload.get('position'):
+        return True
+    return False
+
+
