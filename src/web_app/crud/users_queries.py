@@ -1,9 +1,12 @@
-from schemas.user_models import BaseUser, UserPlural
+from schemas.token_models import DecodedToken
+from schemas.user_models import BaseUser, UserPlural, UserFullModel
 from playhouse.shortcuts import model_to_dict
 from src.web_app.models.tables import *
 from loguru import logger
 from src.utils.security.paswords_val import Password
 from src.utils.database.connect_to_db import db
+from src.utils.security.jwt.jwt_token import create_access_token, encrypt_token, oauth2_scheme
+from fastapi import Depends
 
 
 def show_all_users() -> UserPlural:
@@ -22,19 +25,39 @@ def create_user(mail: str, login: str, password: str) -> str:
     return login
 
 
-def login(login: str, password: str):
+def login(login: str, password: str) -> str:
     with db.atomic():
         user = User.get_or_none(login=login)
         if not user:
             # raise ValueError('wrong credentials')
             raise ValueError('wrong login')
+        # check password
         p = Password(password)
         true_password = user.password
         if not p.check_password(true_password):
             raise ValueError('wrong password')
 
-        # TODO: create DJT token and return it
-        return True
+        data = {"sub": login,
+                'position': 'user'}
+        token = create_access_token(data)
+        return token
+
+
+def get_user(user: dict = Depends(encrypt_token)) -> UserFullModel:
+    dec_token = DecodedToken(**user)
+    with db.atomic():
+        user = User.get(login=dec_token.login)
+        return UserFullModel(
+            id=user.id,
+            email=user.email,
+            login=user.login,
+            password=user.password,
+            balance=user.balance,
+            best_score=user.best_score,
+            created_date=user.created_date,
+        )
+
+
 
 
 def drop_user(login) -> str:
@@ -73,6 +96,8 @@ def update_password(login: str, old_password: str, new_password: str):
     logger.info(f'{login} - password updated')
 
 
-# create_user('test@mailg.ro', 'log', 'password213')
-
+if __name__ == '__main__':
+    with db.atomic():
+        user = User.get(login='root')
+        print(type(user.created_date))
 

@@ -1,12 +1,13 @@
 from .base_models import BaseUser, BaseMatch, BaseNft
 from pydantic import BaseModel
+from datetime import date
 
 
 class UserFullModel(BaseUser):
     id: int
     balance: float
     best_score: int
-    created_date: str
+    created_date: date = None
 
     matches = list[BaseMatch]
     have_nft = list[BaseNft]

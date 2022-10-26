@@ -30,3 +30,10 @@ class BaseNft(BaseModel):
         orm_mode = True
         getter_dict = PeeweeGetterDict
 
+
+class ServerKey(BaseModel):
+    secret_key: str
+
+
+class Token(BaseModel):
+    access_token: str
