@@ -1,7 +1,6 @@
 from fastapi import HTTPException, Depends, Query
 from fastapi import status
-from schemas.user_models import UserResetPass
-from src.utils.errors.auth_errors import credentials_exception, only_root_exception
+from src.utils.errors.auth_errors import only_root_exception
 from src.utils.security.jwt.jwt_token import is_root
 from src.web_app.crud import root_queires as query
 from loguru import logger
@@ -19,10 +18,8 @@ async def show_all_users(root: bool = Depends(is_root)):
     return {data.json()}
 
 
-
 @root_router.put('/update_balance')
-def update_balance(username: str, new_bal: float,
-                   root: bool = Depends(is_root)):
+async def update_balance(username: str, new_bal: float, root: bool = Depends(is_root)):
     if not root:
         raise only_root_exception
     try:
@@ -40,7 +37,7 @@ def update_balance(username: str, new_bal: float,
 
 
 @root_router.post('/start_new_match')
-def start_new_match(price: float, participants: str = Query(description='user_id separated by space', example='1 2 3...'),
+async def start_new_match(price: float, participants: str = Query(description='user_id separated by space', example='1 2 3...'),
                     root: bool = Depends(is_root)):
     if not root:
         raise only_root_exception
@@ -56,8 +53,7 @@ def start_new_match(price: float, participants: str = Query(description='user_id
 
 
 @root_router.post('/finish_match')
-def finish_match(match_id: int, winner_id: int,
-                 root: bool = Depends(is_root)):
+async def finish_match(match_id: int, winner_id: int, root: bool = Depends(is_root)):
     if not root:
         raise only_root_exception
     try:
@@ -70,8 +66,6 @@ def finish_match(match_id: int, winner_id: int,
             status_code=status.HTTP_408_CONFLICT,
             detail=str(err)
         )
-
-
 
 
 # @root_router.delete('/drop_user')

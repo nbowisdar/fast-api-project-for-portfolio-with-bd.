@@ -1,10 +1,8 @@
 from schemas.user_models import BaseUser, UserPlural
 from playhouse.shortcuts import model_to_dict
-
 from src.utils.security.jwt.jwt_token import create_access_token
 from src.web_app.models.tables import *
 from loguru import logger
-from src.utils.security.paswords_val import Password
 from src.utils.database.connect_to_db import db
 from src.utils.tools.config import ROOT_PASSWORD, ROOT_USERNAME
 

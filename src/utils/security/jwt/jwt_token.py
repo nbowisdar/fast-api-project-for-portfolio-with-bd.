@@ -1,10 +1,8 @@
 import json
-
 from loguru import logger
-
 from schemas.base_models import BaseUser
 from src.utils.errors.auth_errors import credentials_exception
-from src.utils.tools.config import SECRET_KEY, ALGORITHM, ROOT_USERNAME, ROOT_PASSWORD
+from src.utils.tools.config import SECRET_KEY, ALGORITHM, ROOT_USERNAME
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends
 from datetime import datetime, timedelta

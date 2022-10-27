@@ -1,11 +1,10 @@
 from schemas.token_models import DecodedToken
-from schemas.user_models import BaseUser, UserPlural, UserFullModel
-from playhouse.shortcuts import model_to_dict
+from schemas.user_models import UserFullModel
 from src.web_app.models.tables import *
 from loguru import logger
 from src.utils.security.paswords_val import Password
 from src.utils.database.connect_to_db import db
-from src.utils.security.jwt.jwt_token import create_access_token, encrypt_token, oauth2_scheme
+from src.utils.security.jwt.jwt_token import create_access_token, encrypt_token
 from fastapi import Depends
 
 

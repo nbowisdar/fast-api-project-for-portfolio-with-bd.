@@ -27,14 +27,13 @@ async def create_user(user: BaseUser):
             "type": "register"
         }
         token = create_access_token(data, timedelta(minutes=30))
-        send_register_link(recv_mail=user.email, end_point='/user/create_acc/', token=token)
+        await send_register_link(recv_mail=user.email, end_point='/user/create_acc/', token=token)
         return {f'check your email'}
     except Exception as err:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(err)
         )
-
 
 
 @users_router.get('/create_acc/{token}')
@@ -54,12 +53,12 @@ async def create_user(token: str):
 
 
 @users_router.get('/profile')
-def show_profile(user: UserFullModel = Depends(get_user)):
+async def show_profile(user: UserFullModel = Depends(get_user)):
     return {user.json()}
 
 
-@users_router.put('/update_password', )
-def update_password(old_password: str, new_password: str, user=Depends(get_user)):
+@users_router.put('/update_password')
+async def update_password(old_password: str, new_password: str, user=Depends(get_user)):
     try:
         query.update_password(user.login, old_password, new_password)
         logger.info(f'{user.email} - password update')
@@ -74,14 +73,14 @@ def update_password(old_password: str, new_password: str, user=Depends(get_user)
 
 
 @users_router.put('/reset_password/send_link')
-def reset_password(email: str):
+async def reset_password(email: str):
     login = query.get_login_by_email(email=email)
-    send_link(recv_mail=email, login=login, end_point='/user/check_mail/')
+    await send_link(recv_mail=email, login=login, end_point='/user/check_mail/')
     return {'check your email, you will bet a reset link'}
 
 
 @users_router.get('/check_mail/{token}')
-def check_email(token: str):
+async def check_email(token: str):
     try:
         login = get_login_from_token(token)
         return RedirectResponse(f'/user/set_password?login={login}')
@@ -94,7 +93,7 @@ def check_email(token: str):
 
 
 @users_router.get('/set_password')
-def set_password(login: str, new_password: str | None = None):
+async def set_password(login: str, new_password: str | None = None):
     if not new_password:
         return {'please send new password'}
     try:
