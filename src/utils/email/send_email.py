@@ -24,10 +24,10 @@ class MyEmail:
         self.__smtp.send_message(msg)
         logger.info('Code was send')
 
-    def send_new_password(self, email_rcv: str, new_password: str):
+    def send_reset_link(self, email_rcv: str, my_msg: str, subject: str):
         msg = EmailMessage()
-        msg.set_content(new_password)
-        msg['Subject'] = 'Your new password'
+        msg.set_content(my_msg)
+        msg['Subject'] = subject
         msg['From'] = self.sender
         msg['To'] = email_rcv
         self.__smtp.send_message(msg)
@@ -36,7 +36,3 @@ class MyEmail:
     @staticmethod
     def generate_code():
         return str(random.randint(1000, 9999))
-
-
-# def generate_sender(login: str, mail_recv):
-#     pass

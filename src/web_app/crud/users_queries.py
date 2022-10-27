@@ -50,9 +50,6 @@ def get_user(user: dict = Depends(encrypt_token)) -> UserFullModel:
         )
 
 
-
-
-
 def update_password(login: str, old_password: str, new_password: str):
     with db.atomic():
         user = User.get(login=login)
@@ -65,16 +62,32 @@ def update_password(login: str, old_password: str, new_password: str):
     logger.info(f'{login} - password updated')
 
 
-def reset_password(email: str, new_password: str):
+def reset_password(login: str, new_password: str):
     with db.atomic():
-        user = User.get(email=email)
+        user = User.get(email=login)
         p = Password(new_password, validate=True)
         user.password = p.hash_password
         user.save()
-    logger.info(f'{email} - password updated')
+    logger.info(f'{login} - password updated')
+
+
+def get_login_by_email(email: str) -> str:
+    with db.atomic():
+        user = User.get_or_none(email=email)
+        if user:
+            return user.email
+    raise ValueError('wrong email')
+
+
+def is_new_email(email: str) -> bool:
+    with db.atomic():
+        user = User.get_or_none(email=email)
+        if not user:
+            return True
+        raise ValueError('this email is already exists')
 
 
 if __name__ == '__main__':
     with db.atomic():
-        user = User.get(login='root')
-        print(type(user.created_date))
+        user = User.get_or_none(email='test@mailg.ro')
+        print(user)

@@ -1,4 +1,5 @@
 import bcrypt
+import re
 
 # encrypt and validate password
 class Password:
@@ -30,3 +31,11 @@ class Password:
         if not digit_count > 0:
             raise ValueError('Password must contain at least one number')
         return True
+
+    @staticmethod
+    def validation_email(mail: str) -> bool:
+        pattern = '.+@.+\.+.'
+        rez = re.search(pattern, mail)
+        if rez:
+            return True
+        return False
