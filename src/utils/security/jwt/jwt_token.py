@@ -36,7 +36,7 @@ def encrypt_token(token: str = Depends(oauth2_scheme)) -> dict:
     return data
 
 
-def get_root(token: str = Depends(oauth2_scheme)) -> bool:
+def is_root(token: str = Depends(oauth2_scheme)) -> bool:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError as err:

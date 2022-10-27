@@ -8,10 +8,10 @@ from loguru import logger
 from fastapi import APIRouter, Depends
 from src.web_app.crud.users_queries import get_user
 
-users_router = APIRouter()
+users_router = APIRouter(prefix='/user')
 
 
-@users_router.post('/create_user')
+@users_router.post('/signup')
 async def create_user(user: BaseUser):
     try:
         query.create_user(user.email, user.login, user.password)
@@ -44,3 +44,5 @@ def update_password(user: UserUpdatePass):
             status_code=status.HTTP_409_CONFLICT,
             detail=str(err)
         )
+
+

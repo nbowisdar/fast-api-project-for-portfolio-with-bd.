@@ -15,7 +15,7 @@ def login(login: str, password: str) -> str:
                 'position': 'root'}
         token = create_access_token(data)
         return token
-    return False
+    raise ValueError('wrong credentials')
 
 
 def show_all_users() -> UserPlural:
@@ -26,12 +26,12 @@ def show_all_users() -> UserPlural:
     return UserPlural(**rez)
 
 
-def update_balance(login: str, tokens: int):
+def update_balance(username: str, new_bal: float):
     with db.atomic():
-        user = User.get(login=login)
-        user.balance = tokens
+        user = User.get(login=username)
+        user.balance = new_bal
         user.save()
-    logger.info(f'{login} - balance updated, new value: {tokens}')
+    logger.info(f'{login} - balance updated, new value: {new_bal}')
 
 
 def reset_password(login: str, new_password: str):
