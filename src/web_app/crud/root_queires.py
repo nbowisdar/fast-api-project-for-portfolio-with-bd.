@@ -34,15 +34,6 @@ def update_balance(username: str, new_bal: float):
     logger.info(f'{login} - balance updated, new value: {new_bal}')
 
 
-def reset_password(login: str, new_password: str):
-    with db.atomic():
-        user = User.get(login=login)
-        p = Password(new_password, validate=True)
-        user.password = p.hash_password
-        user.save()
-    logger.info(f'{login} - password updated')
-
-
 # def drop_user(login) -> str:
 #     with db.atomic():
 #         user = User.get(login=login)

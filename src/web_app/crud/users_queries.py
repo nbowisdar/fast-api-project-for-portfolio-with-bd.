@@ -50,6 +50,9 @@ def get_user(user: dict = Depends(encrypt_token)) -> UserFullModel:
         )
 
 
+
+
+
 def update_password(login: str, old_password: str, new_password: str):
     with db.atomic():
         user = User.get(login=login)
@@ -60,6 +63,15 @@ def update_password(login: str, old_password: str, new_password: str):
         user.password = p_new.hash_password
         user.save()
     logger.info(f'{login} - password updated')
+
+
+def reset_password(email: str, new_password: str):
+    with db.atomic():
+        user = User.get(email=email)
+        p = Password(new_password, validate=True)
+        user.password = p.hash_password
+        user.save()
+    logger.info(f'{email} - password updated')
 
 
 if __name__ == '__main__':

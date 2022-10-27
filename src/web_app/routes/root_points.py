@@ -19,20 +19,6 @@ async def show_all_users(root: bool = Depends(is_root)):
     return {data.json()}
 
 
-# TODO maybe this can be users point
-@root_router.put('/reset_password')
-def reset_password(user: UserResetPass):
-    try:
-        query.reset_password(user.login, user.new_password)
-        logger.info(f'{user.login} - password update')
-        return {f'{user.login} - password update'}
-
-    except Exception as err:
-        logger.error(err)
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(err)
-        )
 
 @root_router.put('/update_balance')
 def update_balance(username: str, new_bal: float,

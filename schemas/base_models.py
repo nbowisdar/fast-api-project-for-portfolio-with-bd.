@@ -1,9 +1,9 @@
 from .config import *
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class BaseUser(BaseModel):
-    email: str
+    email: EmailStr
     login: str
     password: str
 

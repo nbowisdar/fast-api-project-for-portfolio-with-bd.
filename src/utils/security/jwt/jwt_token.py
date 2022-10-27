@@ -47,3 +47,9 @@ def is_root(token: str = Depends(oauth2_scheme)) -> bool:
     return False
 
 
+def is_authenticated(token: str | None = Depends(oauth2_scheme)) -> bool:
+    if token:
+        return True
+    return False
+
+

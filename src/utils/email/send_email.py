@@ -11,7 +11,6 @@ class MyEmail:
         self.sender = sender
         self.__smtp = smtp
         self.port = port
-        #self.loop = asyncio.get_event_loop()
 
     def disconnect(self):
         self.__smtp.quit()
@@ -24,6 +23,15 @@ class MyEmail:
         msg['To'] = email_rcv
         self.__smtp.send_message(msg)
         logger.info('Code was send')
+
+    def send_new_password(self, email_rcv: str, new_password: str):
+        msg = EmailMessage()
+        msg.set_content(new_password)
+        msg['Subject'] = 'Your new password'
+        msg['From'] = self.sender
+        msg['To'] = email_rcv
+        self.__smtp.send_message(msg)
+        logger.info(f'Sanded new password to {email_rcv}')
 
     @staticmethod
     def generate_code():

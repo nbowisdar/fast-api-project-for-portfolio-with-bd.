@@ -1,5 +1,5 @@
 from .base_models import BaseUser, BaseMatch, BaseNft
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from datetime import date
 
 
@@ -23,7 +23,7 @@ class LoginModel(BaseModel):
 
 
 class UserResetPass(BaseModel):
-    login: str
+    email: EmailStr
     new_password: str
 
 
