@@ -34,7 +34,7 @@ def reset_password(user: UserResetPass):
             detail=str(err)
         )
 
-
+@root_router.put('/update_balance')
 def update_balance(username: str, new_bal: float,
                    root: bool = Depends(is_root)):
     if not root:
