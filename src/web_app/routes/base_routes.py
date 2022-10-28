@@ -17,8 +17,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), root: bool = F
         if token:
             return {'login': 'success',
                     "access_token": token}
-        else:
-            raise HTTPException(409, 'wrong data')
+        raise Exception('wrong credential')
     except Exception as err:
         logger.error(err)
         raise HTTPException(

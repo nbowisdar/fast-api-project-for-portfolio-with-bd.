@@ -10,7 +10,7 @@ from src.web_app.crud import matches_queries as match
 root_router = APIRouter(prefix='/root')
 
 
-@root_router.get("/show_all_users",)
+@root_router.get("/show_all_users", )
 async def show_all_users(root: bool = Depends(is_root)):
     if not root:
         raise only_root_exception
@@ -31,18 +31,22 @@ async def update_balance(username: str, new_bal: float, root: bool = Depends(is_
             detail=str(err)
         )
 
+
 ############
 'match'
+
+
 ############
 
 
 @root_router.post('/start_new_match')
-async def start_new_match(price: float, participants: str = Query(description='user_id separated by space', example='1 2 3...'),
-                    root: bool = Depends(is_root)):
+async def start_new_match(price: float,
+                          participants: str = Query(description='user_id separated by space', example='1 2 3...'),
+                          root: bool = Depends(is_root)):
     if not root:
         raise only_root_exception
     try:
-        match_id = match.match_started(price, participants)
+        match_id = match.begin_match(price, participants)
         return {f'Match №{match_id} - started'}
     except Exception as err:
         logger.error(err)
@@ -57,8 +61,8 @@ async def finish_match(match_id: int, winner_id: int, root: bool = Depends(is_ro
     if not root:
         raise only_root_exception
     try:
-        match.match_ended(match_id, winner_id)
-        logger.info(f'Match №{match_id} finished')
+        match.finish_match(match_id, winner_id)
+        logger.info(f'Match №{match_id} - finished')
         return {f'Match №{match_id} - finished'}
     except Exception as err:
         logger.error(err)
@@ -66,7 +70,6 @@ async def finish_match(match_id: int, winner_id: int, root: bool = Depends(is_ro
             status_code=status.HTTP_408_CONFLICT,
             detail=str(err)
         )
-
 
 # @root_router.delete('/drop_user')
 # async def drop_user(login: str):

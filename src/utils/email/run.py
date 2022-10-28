@@ -5,11 +5,8 @@ from src.utils.tools.config import MAIL_SENDER, MAIL_PASSWORD, BASE_URL
 from datetime import timedelta
 
 
-async def send_link(*, recv_mail, login, end_point: str):
+async def send_link(*, recv_mail: str, end_point: str, token: str):
     mail = MyEmail(MAIL_SENDER, MAIL_PASSWORD)
-    data = {"sub": login,
-            'position': 'user'}
-    token = create_access_token(data, expires_delta=timedelta(minutes=3))
     msg = BASE_URL + end_point + token
     try:
         await mail.send_reset_link(recv_mail, msg, 'Reset password')
