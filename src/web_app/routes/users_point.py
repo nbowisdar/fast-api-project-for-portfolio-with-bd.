@@ -1,5 +1,4 @@
-from fastapi import HTTPException
-from fastapi import status
+from fastapi import HTTPException, Header, status
 from schemas.base_models import BaseUser
 from schemas.user_models import UserFullModel
 from src.utils.email.run import send_link, send_register_link
@@ -84,7 +83,7 @@ async def reset_password(email: str):
     # otherwise will return users login
     login = query.get_login_by_email(email=email)
 
-    # we create special JWT token inside this link.
+    # we create special JWT token and put it inside this link.
     data = {"sub": login,
             'position': 'user'}
     token = create_access_token(data, expires_delta=timedelta(minutes=3))
@@ -99,8 +98,8 @@ async def reset_password(email: str):
 @users_router.get('/check_mail/{token}')
 async def check_email(token: str):
     try:
-        login = get_login_from_token(token)
-        return RedirectResponse(f'/user/set_password?login={login}')
+        return RedirectResponse(f'/user/set_password',
+                                headers={'token': token})
     except Exception as err:
         logger.error(err)
         raise HTTPException(
@@ -110,10 +109,13 @@ async def check_email(token: str):
 
 
 @users_router.get('/set_password')
-async def set_password(login: str, new_password: str | None = None):
-    if not new_password:
-        return {'please send new password'}
+async def set_password(new_password: str | None = None,
+                       user_agent=Header(default=None)):
     try:
+        token = user_agent['token']
+        login = get_login_from_token(token)
+        if not new_password:
+            return {'please send new password'}
         query.reset_password(login, new_password)
         return {"Congrats! You've just set new password!"}
     except Exception as err:
