@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from loguru import logger
+
+from src.utils.security.jwt.jwt_token import encrypt_token, oauth2_scheme
 from src.web_app.crud.root_queires import login as root_login
 from src.web_app.crud.users_queries import login as user_login
 
@@ -9,8 +11,7 @@ base_router = APIRouter()
 
 @base_router.post('/login/')
 async def login(form_data: OAuth2PasswordRequestForm = Depends(),
-                root: bool = False,
-                ):
+                root: bool = False):
     try:
         if root:
             token = root_login(form_data.username, form_data.password)
@@ -26,3 +27,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(),
             status_code=status.HTTP_409_CONFLICT,
             detail=str(err)
         )
+
+# TODO: I can add one field in USER table 'logged in'
+# TODO And if user is 'logged in' I will redirect him to another page

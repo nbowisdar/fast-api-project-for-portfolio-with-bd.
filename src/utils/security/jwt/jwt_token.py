@@ -23,7 +23,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     return encoded_jwt
 
 
-# return login and position in dict
+# return login and position
 def encrypt_token(token: str = Depends(oauth2_scheme)) -> dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -37,6 +37,7 @@ def encrypt_token(token: str = Depends(oauth2_scheme)) -> dict:
     return data
 
 
+# check if it is root
 def is_root(token: str = Depends(oauth2_scheme)) -> bool:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -58,6 +59,7 @@ def get_login_from_token(token: str) -> str:
     raise ValueError('wrong token')
 
 
+# decode this frightening link from email
 def decode_register_token(token: str) -> BaseUser:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from schemas.base_models import BaseUser
 from schemas.user_models import UserFullModel
-from src.utils.email.run import send_link, send_register_link
+from src.utils.email.email import send_reset_link, send_register_link
 from src.utils.security.jwt.jwt_token import get_login_from_token, create_access_token, decode_register_token
 from src.utils.security.paswords_val import Password
 from src.web_app.crud import users_queries as query
@@ -91,7 +91,7 @@ async def reset_password(email: str):
     # when user opens this link - we take back JWT
     # and allow them to change password
 
-    await send_link(recv_mail=email, token=token, end_point='/user/set_password/')
+    await send_reset_link(recv_mail=email, token=token, end_point='/user/set_password/')
     return {'check your email, you will bet a reset link'}
 
 
