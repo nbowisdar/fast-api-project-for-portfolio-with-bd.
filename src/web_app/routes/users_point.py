@@ -1,3 +1,5 @@
+import json
+
 from fastapi import HTTPException, Header, status
 from schemas.base_models import BaseUser
 from schemas.user_models import UserFullModel
@@ -10,6 +12,7 @@ from fastapi import APIRouter, Depends
 from src.web_app.crud.users_queries import get_user
 from datetime import timedelta
 from fastapi.responses import RedirectResponse
+from jose import JWTError
 
 users_router = APIRouter(prefix='/user')
 
@@ -80,44 +83,32 @@ async def update_password(old_password: str, new_password: str, user=Depends(get
 async def reset_password(email: str):
     # we need users login because it will help reset his password later
     # the line below will throw an error if email is wrong.
-    # otherwise will return users login
+    # otherwise - return users login
     login = query.get_login_by_email(email=email)
 
     # we create special JWT token and put it inside this link.
     data = {"sub": login,
             'position': 'user'}
     token = create_access_token(data, expires_delta=timedelta(minutes=3))
-    # we send message to users email with link.
-    # when user open this link - we take back JWT
+    # we send link to users email.
+    # when user opens this link - we take back JWT
     # and allow them to change password
 
-    await send_link(recv_mail=email, token=token, end_point='/user/check_mail/')
+    await send_link(recv_mail=email, token=token, end_point='/user/set_password/')
     return {'check your email, you will bet a reset link'}
 
 
-@users_router.get('/check_mail/{token}')
-async def check_email(token: str):
+@users_router.get('/set_password/{token}')
+async def set_password(token: str, new_password: str | None = None):
+    # user should have token that we send them on email
+    if not token:
+        raise HTTPException(403, {'response': 'forbidden'})
     try:
-        return RedirectResponse(f'/user/set_password',
-                                headers={'token': token})
-    except Exception as err:
-        logger.error(err)
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(err)
-        )
-
-
-@users_router.get('/set_password')
-async def set_password(new_password: str | None = None,
-                       user_agent=Header(default=None)):
-    try:
-        token = user_agent['token']
         login = get_login_from_token(token)
         if not new_password:
-            return {'please send new password'}
+            return {'response': 'please send new password'}
         query.reset_password(login, new_password)
-        return {"Congrats! You've just set new password!"}
+        return {'response': "Congrats! You've just set new password!"}
     except Exception as err:
         logger.error(err)
         raise HTTPException(
