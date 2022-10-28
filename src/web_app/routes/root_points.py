@@ -19,11 +19,11 @@ async def show_all_users(root: bool = Depends(is_root)):
 
 
 @root_router.put('/update_balance')
-async def update_balance(username: str, new_bal: float, root: bool = Depends(is_root)):
+async def update_balance(login: str, new_bal: float, root: bool = Depends(is_root)):
     if not root:
         raise only_root_exception
     try:
-        query.update_balance(username, new_bal)
+        query.update_balance(login, new_bal)
     except Exception as err:
         logger.error(err)
         raise HTTPException(

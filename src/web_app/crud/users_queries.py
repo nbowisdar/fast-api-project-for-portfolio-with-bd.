@@ -24,18 +24,18 @@ def login(login: str, password: str) -> str:
             raise ValueError('wrong login')
         # check password
         p = Password(password)
-        true_password = user.password
-        if not p.check_password(true_password):
+        if not p.check_password(user.password):
             raise ValueError('wrong password')
 
+        # generate JWT token
         data = {"sub": login,
                 'position': 'user'}
         token = create_access_token(data)
         return token
 
 
-def get_user(user: dict = Depends(encrypt_token)) -> UserFullModel:
-    dec_token = DecodedToken(**user)
+def get_user(token: dict = Depends(encrypt_token)) -> UserFullModel:
+    dec_token = DecodedToken(**token)
     with db.atomic():
         user = User.get(login=dec_token.login)
         return UserFullModel(
@@ -52,9 +52,13 @@ def get_user(user: dict = Depends(encrypt_token)) -> UserFullModel:
 def update_password(login: str, old_password: str, new_password: str):
     with db.atomic():
         user = User.get(login=login)
+
+        # if old password is incorrect throw an error
         p_old = Password(old_password, validate=True)
         if not p_old.check_password(user.password):
             raise ValueError('wrong password')
+
+        # if everything fine - change password
         p_new = Password(new_password, validate=True)
         user.password = p_new.hash_password
         user.save()
@@ -63,7 +67,7 @@ def update_password(login: str, old_password: str, new_password: str):
 
 def reset_password(login: str, new_password: str):
     with db.atomic():
-        user = User.get(email=login)
+        user = User.get(login=login)
         p = Password(new_password, validate=True)
         user.password = p.hash_password
         user.save()
@@ -74,19 +78,14 @@ def get_login_by_email(email: str) -> str:
     with db.atomic():
         user = User.get_or_none(email=email)
         if user:
-            return user.email
+            return user.login
     raise ValueError('wrong email')
 
 
 def is_new_email(email: str) -> bool:
     with db.atomic():
         user = User.get_or_none(email=email)
-        if not user:
-            return True
-        raise ValueError('this email is already exists')
+        if user:
+            raise ValueError('this email is already exists')
+        return True
 
-
-if __name__ == '__main__':
-    with db.atomic():
-        user = User.get_or_none(email='test@mailg.ro')
-        print(user)

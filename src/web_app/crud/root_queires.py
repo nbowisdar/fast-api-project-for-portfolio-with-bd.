@@ -24,9 +24,9 @@ def show_all_users() -> UserPlural:
     return UserPlural(**rez)
 
 
-def update_balance(username: str, new_bal: float):
+def update_balance(login: str, new_bal: float):
     with db.atomic():
-        user = User.get(login=username)
+        user = User.get(login=login)
         user.balance = new_bal
         user.save()
     logger.info(f'{login} - balance updated, new value: {new_bal}')

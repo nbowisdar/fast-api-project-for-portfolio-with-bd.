@@ -1,6 +1,4 @@
-import json
-
-from fastapi import HTTPException, Header, status
+from fastapi import HTTPException, status
 from schemas.base_models import BaseUser
 from schemas.user_models import UserFullModel
 from src.utils.email.run import send_link, send_register_link
@@ -11,8 +9,7 @@ from loguru import logger
 from fastapi import APIRouter, Depends
 from src.web_app.crud.users_queries import get_user
 from datetime import timedelta
-from fastapi.responses import RedirectResponse
-from jose import JWTError
+
 
 users_router = APIRouter(prefix='/user')
 
@@ -42,8 +39,8 @@ async def sign_up(user: BaseUser):
 
 @users_router.get('/create_acc/{token}')
 async def create_user(token: str):
-    # when user open link from email wi will unpack his credential
-    # and will create a new account
+    # when user open link from email we unpack his credential
+    # and create a new account
     user = decode_register_token(token)
     try:
         query.create_user(user.email, user.login, user.password)

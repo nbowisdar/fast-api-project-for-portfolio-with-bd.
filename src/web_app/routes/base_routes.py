@@ -8,7 +8,9 @@ base_router = APIRouter()
 
 
 @base_router.post('/login/')
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), root: bool = False):
+async def login(form_data: OAuth2PasswordRequestForm = Depends(),
+                root: bool = False,
+                ):
     try:
         if root:
             token = root_login(form_data.username, form_data.password)
